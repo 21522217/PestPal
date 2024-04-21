@@ -2,8 +2,8 @@ import React, {Component, ReactNode, useEffect, useRef, useState} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import {useFocusEffect, useIsFocused} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/AntDesign';
 import {COLORS} from '../theme/theme';
+import Icon from "react-native-vector-icons/AntDesign"
 
 type Props = {
   icon: ReactNode | string;
