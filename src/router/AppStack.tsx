@@ -1,7 +1,7 @@
 import React from 'react';
 
 import HomeScreen from '../screens/HomeScreen';
-import ProfileScreen from '../screens/CameraScreen';
+import HistoryScreen from '../screens/HistoryScreen';
 import SettingsScreen from '../screens/SettingScreen';
 import OtherScreen from '../screens/OtherScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -13,7 +13,7 @@ import TabButton from '../components/TabButton';
 
 export type AppStackParamsList = {
   HomeScreen: undefined;
-  ProfileScreen: undefined;
+  HistoryScreen: undefined;
   SettingScreen: undefined;
   OtherScreen: undefined;
 };
@@ -38,8 +38,8 @@ export default function AppStack() {
         }}
       />
       <stack.Screen
-        name="ProfileScreen"
-        component={ProfileScreen}
+        name="HistoryScreen"
+        component={HistoryScreen}
         options={{
           tabBarButton: ({ onFocus, onPress }) => <TabButton icon={'home'} onFocus={onFocus} onPress={onPress} />
         }}

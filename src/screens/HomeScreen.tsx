@@ -1,7 +1,6 @@
 // HomeScreen.tsx
-import React, {useEffect} from 'react';
-import {View, Text} from 'react-native';
-import {Button, Alert} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Button, Alert, StyleSheet } from 'react-native';
 import {
   CameraOptions,
   ImageLibraryOptions,
@@ -9,12 +8,18 @@ import {
   launchImageLibrary,
   launchCamera,
 } from 'react-native-image-picker';
-import {ImagePickerResponse} from 'react-native-image-picker';
-import {PermissionsAndroid} from 'react-native';
+import { PermissionsAndroid } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { AppStackParamList, ImageType } from '../types';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+type HomeScreenNavigationProp = StackNavigationProp<AppStackParamList, 'HomeScreen'>;
 
 const HomeScreen = () => {
+  const navigation = useNavigation<HomeScreenNavigationProp>();
+  const [imageHistory, setImageHistory] = useState<ImageType[]>([]);
+
   useEffect(() => {
-    // Mount component - only me know this becoz I'm pro player react native
     const requestCameraPermission = async () => {
       try {
         const granted = await PermissionsAndroid.request(
@@ -42,52 +47,57 @@ const HomeScreen = () => {
 
   const openImagePicker = () => {
     const options: ImageLibraryOptions = {
-      mediaType: 'photo' as MediaType, // Specify the media type as 'photo' or 'video' depending on your requirement
+      mediaType: 'photo' as MediaType,
     };
 
-    launchImageLibrary(options, (response: ImagePickerResponse) => {
+    launchImageLibrary(options, (response) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorMessage) {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else if (response.assets && response.assets.length > 0) {
-        // Access the URI from the first asset
-        const source = {uri: response.assets[0].uri};
-        // Do something with the selected image
-        Alert.alert('Image Selected!', 'Do something with the image', [
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
-        ]);
+        const source = { uri: response.assets[0].uri, description: '' };
+        const updatedHistory = [...imageHistory, source];
+        setImageHistory(updatedHistory);
+        navigation.navigate('HistoryScreen', { images: updatedHistory });
       }
     });
   };
 
   const openCamera = () => {
     const options: CameraOptions = {
-      mediaType: 'photo' as MediaType, // Specify the media type as 'photo' or 'video' depending on your requirement
+      mediaType: 'photo' as MediaType,
     };
 
-    launchCamera(options, (response: ImagePickerResponse) => {
+    launchCamera(options, (response) => {
       if (response.didCancel) {
         console.log('User cancelled camera');
       } else if (response.errorMessage) {
         console.log('Camera Error: ', response.errorMessage);
       } else if (response.assets && response.assets.length > 0) {
-        // Access the URI from the first asset
-        const source = {uri: response.assets[0].uri};
-        // Do something with the taken photo
-        Alert.alert('Photo Taken!', 'Do something with the photo', [
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
-        ]);
+        const source = { uri: response.assets[0].uri, description: '' };
+        const updatedHistory = [...imageHistory, source];
+        setImageHistory(updatedHistory);
+        navigation.navigate('HistoryScreen', { images: updatedHistory });
       }
     });
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <Button title="Open Image Library" onPress={openImagePicker} />
       <Button title="Open Camera" onPress={openCamera} />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+});
 
 export default HomeScreen;
