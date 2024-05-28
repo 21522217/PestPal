@@ -53,7 +53,7 @@ const HomeScreen = () => {
       mediaType: 'photo' as MediaType,
     };
 
-    launchImageLibrary(options, (response: any) => {
+    launchImageLibrary(options, response => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorMessage) {
@@ -72,7 +72,7 @@ const HomeScreen = () => {
       mediaType: 'photo' as MediaType,
     };
 
-    launchCamera(options, (response: any) => {
+    launchCamera(options, response => {
       if (response.didCancel) {
         console.log('User cancelled camera');
       } else if (response.errorMessage) {
@@ -97,7 +97,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#fff',
   },
