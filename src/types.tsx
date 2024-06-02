@@ -1,8 +1,12 @@
 
 export type ImageType = {
-    uri: string | undefined;
-    description: string;
-  };
+  uri: string;
+  title: string;
+  description: string;
+  additionalInfo: string;
+  additionalImages: string[];
+};
+
   
   export type AppStackParamList = {
     HomeScreen: undefined;
