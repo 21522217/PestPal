@@ -7,6 +7,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
 import {
   CameraOptions,
@@ -21,7 +22,7 @@ import {AppStackParamList, ImageType} from '../types';
 import {StackNavigationProp} from '@react-navigation/stack';
 import axios from 'axios';
 
-import {COLORS} from '../theme/theme';
+import {COLORS, SCALES} from '../theme/theme';
 
 type HomeScreenNavigationProp = StackNavigationProp<
   AppStackParamList,
@@ -126,36 +127,99 @@ const HomeScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={openImagePicker}>
-        <Text style={styles.buttonText}>Open Image Library</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={openCamera}>
-        <Text style={styles.buttonText}>Open Camera</Text>
-      </TouchableOpacity>
-      {label && <Text style={styles.label}>Label: {label}</Text>}
-      {imageHistory.length > 0 && (
+    <ImageBackground
+      source={require('../assets/appBG.png')}
+      style={styles.container}>
+      <View style={styles.banner}>
         <Image
-          source={{uri: imageHistory[imageHistory.length - 1].uri}}
-          style={styles.image}
+          source={require('../assets/pestpalWelcome.png')}
+          style={styles.bannerImage}
         />
-      )}
-    </View>
+      </View>
+
+      <View style={styles.buttons}>
+        <TouchableOpacity style={styles.button} onPress={openImagePicker}>
+          <View
+            style={{
+              display: 'flex',
+              flex: 0.3,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Image source={require('../assets/Vector.png')} />
+          </View>
+          <View
+            style={{
+              display: 'flex',
+              flex: 0.7,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text style={styles.buttonText}>Library</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={openCamera}>
+          <View
+            style={{
+              display: 'flex',
+              flex: 0.3,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Image source={require('../assets/Camera.png')} />
+          </View>
+          <View
+            style={{
+              display: 'flex',
+              flex: 0.7,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text style={styles.buttonText}>Camera</Text>
+          </View>
+        </TouchableOpacity>
+        {/* {label && <Text style={styles.label}>Label: {label}</Text>}
+        {imageHistory.length > 0 && (
+          <Image
+            source={{uri: imageHistory[imageHistory.length - 1].uri}}
+            style={styles.image}
+          />
+        )} */}
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
-    flexDirection: 'column',
     flex: 1,
-    justifyContent: 'center',
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: COLORS.mainBackground,
+  },
+  banner: {
+    display: 'flex',
+    flex: 0.2,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bannerImage: {
+    width: '100%',
+  },
+  buttons: {
+    display: 'flex',
+    flex: 0.4,
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    width: '100%',
   },
   button: {
-    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    width: '70%',
     backgroundColor: COLORS.buttonColor,
     justifyContent: 'center',
     alignItems: 'center',
@@ -164,7 +228,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: 32,
+    fontWeight: 'bold',
   },
   label: {
     marginVertical: 20,

@@ -1,3 +1,5 @@
+import {Dimensions} from 'react-native';
+
 interface Spacing {
   space_2: number;
   space_4: number;
@@ -134,4 +136,14 @@ export const BORDERRADIUS: BorderRadius = {
   radius_15: 15,
   radius_20: 20,
   radius_25: 25,
+};
+
+interface ISCale {
+  screenWidth: Number;
+  screenHeight: Number;
+}
+
+export const SCALES: ISCale = {
+  screenWidth: Dimensions.get('window').width,
+  screenHeight: Dimensions.get('window').height,
 };

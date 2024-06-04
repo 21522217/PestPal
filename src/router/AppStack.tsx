@@ -72,11 +72,19 @@ export default function AppStack() {
 const styles = StyleSheet.create({
   tabBarStyle: {
     position: 'absolute',
+    bottom: 20,
+    marginHorizontal: 20,
     height: 60,
     borderTopWidth: 0,
     elevation: 0,
     backgroundColor: COLORS.bottomBarColor,
     borderTopColor: 'transparent',
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 10},
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    paddingHorizontal: 20,
   },
   BlurViewStyle: {
     position: 'absolute',
