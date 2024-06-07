@@ -1,10 +1,15 @@
 
+// export type ImageType = {
+//   uri: string;
+//   title: string;
+//   description: string;
+//   additionalInfo: string;
+//   additionalImages: string[];
+// };
+
 export type ImageType = {
   uri: string;
-  title: string;
   description: string;
-  additionalInfo: string;
-  additionalImages: string[];
 };
 
   
