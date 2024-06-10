@@ -33,7 +33,7 @@ export default function AppStack() {
           <BlurView
             overlayColor=""
             blurAmount={15}
-            style={styles.BlurViewStyle}
+            style={styles.blurViewStyle}
           />
         ),
       }}>
@@ -45,7 +45,7 @@ export default function AppStack() {
             <Icon
               name="home"
               size={30}
-              color={focused ? COLORS.primaryOrangeHex : COLORS.primaryGreyHex}
+              color={focused ? COLORS.primaryBlueHex : COLORS.primaryGreyHex}
             />
           ),
         }}
@@ -54,8 +54,12 @@ export default function AppStack() {
         name="HistoryScreen"
         component={HistoryScreen}
         options={{
-          tabBarButton: ({onFocus, onPress}) => (
-            <TabButton icon={'home'} onFocus={onFocus} onPress={onPress} />
+          tabBarIcon: ({focused, color, size}) => (
+            <Icon
+              name="book"
+              size={30}
+              color={focused ? COLORS.primaryBlueHex : COLORS.primaryGreyHex}
+            />
           ),
         }}
       />
@@ -63,8 +67,12 @@ export default function AppStack() {
         name="SettingScreen"
         component={SettingsScreen}
         options={{
-          tabBarButton: ({onFocus, onPress}) => (
-            <TabButton icon={'staro'} onFocus={onFocus} onPress={onPress} />
+          tabBarIcon: ({focused, color, size}) => (
+            <Icon
+              name="setting"
+              size={30}
+              color={focused ? COLORS.primaryBlueHex : COLORS.primaryGreyHex}
+            />
           ),
         }}
       />
@@ -72,8 +80,12 @@ export default function AppStack() {
         name="OtherScreen"
         component={OtherScreen}
         options={{
-          tabBarButton: ({onFocus, onPress}) => (
-            <TabButton icon={'car'} onFocus={onFocus} onPress={onPress} />
+          tabBarIcon: ({focused, color, size}) => (
+            <Icon
+              name="bells"
+              size={30}
+              color={focused ? COLORS.primaryBlueHex : COLORS.primaryGreyHex}
+            />
           ),
         }}
       />
@@ -87,18 +99,18 @@ const styles = StyleSheet.create({
     bottom: 20,
     marginHorizontal: 20,
     height: 60,
-    borderTopWidth: 0,
-    elevation: 0,
     backgroundColor: COLORS.bottomBarColor,
-    borderTopColor: 'transparent',
-    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: 50,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 10},
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
-    shadowRadius: 10,
-    paddingHorizontal: 20,
+    shadowRadius: 3.84,
+    elevation: 5,
+    overflow: 'hidden',
   },
-  BlurViewStyle: {
+  blurViewStyle: {
     position: 'absolute',
     top: 0,
     bottom: 0,

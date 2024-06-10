@@ -1,11 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Modal, TextInput, FlatList, Dimensions } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
-import { AppStackParamList, ImageType } from '../types';  // Import the types
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+  FlatList,
+  Dimensions,
+} from 'react-native';
+import {useRoute, RouteProp} from '@react-navigation/native';
+import {AppStackParamList, ImageType} from '../types';
+import {COLORS} from '../theme/theme';
+import LinearGradient from 'react-native-linear-gradient';
 
 type HistoryScreenRouteProp = RouteProp<AppStackParamList, 'HistoryScreen'>;
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
 const HistoryScreen = () => {
   const route = useRoute<HistoryScreenRouteProp>();
@@ -18,8 +30,8 @@ const HistoryScreen = () => {
       additionalImages: [
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJfm5igD508MEnPcQLMiiEntRfWiMLypTdxA&s',
         'https://live.staticflickr.com/3193/5847507111_b2c35c4864_b.jpg',
-        'https://www.mdpi.com/insects/insects-15-00165/article_deploy/html/images/insects-15-00165-g030-550.jpg'
-      ]
+        'https://www.mdpi.com/insects/insects-15-00165/article_deploy/html/images/insects-15-00165-g030-550.jpg',
+      ],
     },
     {
       uri: 'https://live.staticflickr.com/3193/5847507111_b2c35c4864_b.jpg',
@@ -29,8 +41,8 @@ const HistoryScreen = () => {
       additionalImages: [
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJfm5igD508MEnPcQLMiiEntRfWiMLypTdxA&s',
         'https://live.staticflickr.com/3193/5847507111_b2c35c4864_b.jpg',
-        'https://www.mdpi.com/insects/insects-15-00165/article_deploy/html/images/insects-15-00165-g030-550.jpg'
-      ]
+        'https://www.mdpi.com/insects/insects-15-00165/article_deploy/html/images/insects-15-00165-g030-550.jpg',
+      ],
     },
     {
       uri: 'https://live.staticflickr.com/3193/5847507111_b2c35c4864_b.jpg',
@@ -40,8 +52,8 @@ const HistoryScreen = () => {
       additionalImages: [
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJfm5igD508MEnPcQLMiiEntRfWiMLypTdxA&s',
         'https://live.staticflickr.com/3193/5847507111_b2c35c4864_b.jpg',
-        'https://www.mdpi.com/insects/insects-15-00165/article_deploy/html/images/insects-15-00165-g030-550.jpg'
-      ]
+        'https://www.mdpi.com/insects/insects-15-00165/article_deploy/html/images/insects-15-00165-g030-550.jpg',
+      ],
     },
   ];
 
@@ -62,8 +74,8 @@ const HistoryScreen = () => {
   useEffect(() => {
     setFilteredData(
       descriptions.filter(image =>
-        image.title.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+        image.title.toLowerCase().includes(searchQuery.toLowerCase()),
+      ),
     );
   }, [searchQuery, descriptions]);
 
@@ -73,9 +85,9 @@ const HistoryScreen = () => {
     setCurrentIndex(0);
   };
 
-  const renderImageItem = ({ item }: { item: ImageType }) => (
+  const renderImageItem = ({item}: {item: ImageType}) => (
     <View style={styles.card}>
-      <Image source={{ uri: item.uri }} style={styles.image} />
+      <Image source={{uri: item.uri}} style={styles.image} />
       <View style={styles.textContainer}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.description}>{item.description}</Text>
@@ -86,8 +98,8 @@ const HistoryScreen = () => {
     </View>
   );
 
-  const renderCarouselItem = ({ item }: { item: string }) => (
-    <Image source={{ uri: item }} style={styles.modalImage} />
+  const renderCarouselItem = ({item}: {item: string}) => (
+    <Image source={{uri: item}} style={styles.modalImage} />
   );
 
   const handleScroll = (event: any) => {
@@ -99,7 +111,11 @@ const HistoryScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={[COLORS.mainBackground, COLORS.mainBackgroundSecond]}
+      start={{x: 0, y: 0}}
+      end={{x: 1, y: 1}}
+      style={styles.container}>
       <TextInput
         style={styles.searchBar}
         placeholder="Search..."
@@ -132,14 +148,18 @@ const HistoryScreen = () => {
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.carouselContainer}
                 />
-                <Text style={styles.modalDescription}>{selectedImage.additionalInfo}</Text>
-                <Text style={styles.modalInfoLink}>Click for more Information on Google</Text>
+                <Text style={styles.modalDescription}>
+                  {selectedImage.additionalInfo}
+                </Text>
+                <Text style={styles.modalInfoLink}>
+                  Click for more Information on Google
+                </Text>
               </>
             )}
           </View>
         </View>
       </Modal>
-    </View>
+    </LinearGradient>
   );
 };
 

@@ -16,12 +16,13 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import * as Animatable from 'react-native-animatable';
 import {COLORS, SPACING} from '../theme/theme';
+import {Icon} from 'react-native-elements';
 
 const HomeScreen: React.FC<{navigation: any}> = ({navigation}) => {
   const colorAnimation = useRef(new Animated.Value(0)).current;
   const textColor = colorAnimation.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: ['#DC3535', '#4B0082', '#D17842'],
+    outputRange: ['#ff0000', '#7300c5', '#ff9900'],
   }) as unknown as string;
 
   useEffect(() => {
@@ -68,16 +69,20 @@ const HomeScreen: React.FC<{navigation: any}> = ({navigation}) => {
         start={{x: 0, y: 0}}
         end={{x: 1, y: 1}}
         style={styles.background}>
-        <Animatable.Text
-          iterationCount="infinite"
-          style={[styles.text, {color: textColor}]}>
-          P E S T P A L
-        </Animatable.Text>
+        <View style={styles.header}>
+          <Animatable.Text
+            iterationCount="infinite"
+            style={[styles.headerText, {color: textColor}]}>
+            P E S T P A L
+          </Animatable.Text>
+        </View>
         <View style={styles.buttonView}>
           <TouchableOpacity onPress={openCamera} style={styles.button}>
-            <Text>Camera</Text>
+            <Icon name="camera" size={30} style={styles.icon} />
+            <Text style={styles.text}>Camera</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={openCamera} style={styles.button}>
+            <Icon name="camera" size={30} style={styles.icon} />
             <Text>Library</Text>
           </TouchableOpacity>
         </View>
@@ -98,9 +103,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  text: {
+  header: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 0.3,
+  },
+  headerText: {
     color: 'white',
-    fontSize: 32,
+    fontSize: 40,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
@@ -112,15 +123,19 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 0.6,
   },
   button: {
     display: 'flex',
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: SPACING.space_20,
     paddingVertical: SPACING.space_10,
-    backgroundColor: '',
+    backgroundColor: COLORS.buttonColor,
   },
+  icon: {},
+  text: {},
 });
 
 export default HomeScreen;
