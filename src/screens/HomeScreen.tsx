@@ -1,249 +1,125 @@
-import React, {useState, useEffect} from 'react';
+import React, {useRef, useEffect} from 'react';
 import {
   View,
-  Button,
-  Alert,
-  StyleSheet,
   Text,
-  Image,
+  Animated,
+  StyleSheet,
   TouchableOpacity,
-  ImageBackground,
+  Easing,
 } from 'react-native';
+
 import {
-  CameraOptions,
-  ImageLibraryOptions,
-  MediaType,
-  launchImageLibrary,
   launchCamera,
+  CameraOptions,
+  ImagePickerResponse,
 } from 'react-native-image-picker';
-import {PermissionsAndroid} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {AppStackParamList, ImageType} from '../types';
-import {StackNavigationProp} from '@react-navigation/stack';
-import axios from 'axios';
+import LinearGradient from 'react-native-linear-gradient';
+import * as Animatable from 'react-native-animatable';
+import {COLORS, SPACING} from '../theme/theme';
 
-import {COLORS, SCALES} from '../theme/theme';
-
-type HomeScreenNavigationProp = StackNavigationProp<
-  AppStackParamList,
-  'HomeScreen'
->;
-
-const HomeScreen = () => {
-  const navigation = useNavigation<HomeScreenNavigationProp>();
-  const [imageHistory, setImageHistory] = useState<ImageType[]>([]);
-  const [label, setLabel] = useState<string | null>(null);
+const HomeScreen: React.FC<{navigation: any}> = ({navigation}) => {
+  const colorAnimation = useRef(new Animated.Value(0)).current;
+  const textColor = colorAnimation.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: ['#DC3535', '#4B0082', '#D17842'],
+  }) as unknown as string;
 
   useEffect(() => {
-    const requestCameraPermission = async () => {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          {
-            title: 'App Camera Permission',
-            message: 'App needs access to your camera ',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('Camera permission given');
-        } else {
-          console.log('Camera permission denied');
-        }
-      } catch (err) {
-        console.warn(err);
-      }
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(colorAnimation, {
+          toValue: 1,
+          duration: 2000,
+          easing: Easing.linear,
+          useNativeDriver: false,
+        }),
+        Animated.timing(colorAnimation, {
+          toValue: 0,
+          duration: 2000,
+          easing: Easing.linear,
+          useNativeDriver: false,
+        }),
+      ]),
+    ).start();
+  }, [colorAnimation]);
+
+  const openCamera = () => {
+    const options: CameraOptions = {
+      mediaType: 'photo',
+      saveToPhotos: true,
     };
 
-    requestCameraPermission();
-  }, []);
-
-  const handleImageResponse = async (uri: string | undefined) => {
-    const formData = new FormData();
-    formData.append('file', {
-      uri: uri,
-      name: 'photo.jpg',
-      type: 'image/jpeg',
-    });
-
-    try {
-      const response = await axios.post(
-        'http://localhost:8000/predict',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        },
-      );
-      setLabel(response.data.predicted_class);
-      Alert.alert('Label', `The label is: ${response.data.predicted_class}`);
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      Alert.alert('Error', 'Failed to upload image');
-    }
-  };
-
-  const openImagePicker = () => {
-    const options: ImageLibraryOptions = {
-      mediaType: 'photo' as MediaType,
-    };
-
-    launchImageLibrary(options, response => {
+    launchCamera(options, (response: ImagePickerResponse) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorMessage) {
         console.log('ImagePicker Error: ', response.errorMessage);
       } else if (response.assets && response.assets.length > 0) {
-        const source = {uri: response.assets[0].uri, description: ''};
-        const updatedHistory = [...imageHistory, source];
-        setImageHistory(updatedHistory);
-        navigation.navigate('HistoryScreen', {images: updatedHistory});
-        handleImageResponse(response.assets[0].uri);
-      }
-    });
-  };
-
-  const openCamera = () => {
-    const options: CameraOptions = {
-      mediaType: 'photo' as MediaType,
-    };
-
-    launchCamera(options, response => {
-      if (response.didCancel) {
-        console.log('User cancelled camera');
-      } else if (response.errorMessage) {
-        console.log('Camera Error: ', response.errorMessage);
-      } else if (response.assets && response.assets.length > 0) {
-        const source = {uri: response.assets[0].uri, description: ''};
-        const updatedHistory = [...imageHistory, source];
-        setImageHistory(updatedHistory);
-        navigation.navigate('HistoryScreen', {images: updatedHistory});
-        handleImageResponse(response.assets[0].uri);
+        const {uri} = response.assets[0];
+        navigation.navigate('ConfigModal', {imageUri: uri});
       }
     });
   };
 
   return (
-    <ImageBackground
-      source={require('../assets/appBG.png')}
-      style={styles.container}>
-      <View style={styles.banner}>
-        <Image
-          source={require('../assets/pestpalWelcome.png')}
-          style={styles.bannerImage}
-        />
-      </View>
-
-      <View style={styles.buttons}>
-        <TouchableOpacity style={styles.button} onPress={openImagePicker}>
-          <View
-            style={{
-              display: 'flex',
-              flex: 0.3,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Image source={require('../assets/Vector.png')} />
-          </View>
-          <View
-            style={{
-              display: 'flex',
-              flex: 0.7,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Text style={styles.buttonText}>Library</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={openCamera}>
-          <View
-            style={{
-              display: 'flex',
-              flex: 0.3,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Image source={require('../assets/Camera.png')} />
-          </View>
-          <View
-            style={{
-              display: 'flex',
-              flex: 0.7,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Text style={styles.buttonText}>Camera</Text>
-          </View>
-        </TouchableOpacity>
-        {/* {label && <Text style={styles.label}>Label: {label}</Text>}
-        {imageHistory.length > 0 && (
-          <Image
-            source={{uri: imageHistory[imageHistory.length - 1].uri}}
-            style={styles.image}
-          />
-        )} */}
-      </View>
-    </ImageBackground>
+    <View style={styles.container}>
+      <LinearGradient
+        colors={[COLORS.mainBackground, COLORS.mainBackgroundSecond]}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 1}}
+        style={styles.background}>
+        <Animatable.Text
+          iterationCount="infinite"
+          style={[styles.text, {color: textColor}]}>
+          P E S T P A L
+        </Animatable.Text>
+        <View style={styles.buttonView}>
+          <TouchableOpacity onPress={openCamera} style={styles.button}>
+            <Text>Camera</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={openCamera} style={styles.button}>
+            <Text>Library</Text>
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
     flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-  },
-  banner: {
-    display: 'flex',
-    flex: 0.2,
-    width: '100%',
-    alignItems: 'center',
     justifyContent: 'center',
-  },
-  bannerImage: {
-    width: '100%',
-  },
-  buttons: {
-    display: 'flex',
-    flex: 0.4,
-    flexDirection: 'column',
-    justifyContent: 'space-evenly',
     alignItems: 'center',
+  },
+  background: {
+    flex: 1,
     width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    color: 'white',
+    fontSize: 32,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 10,
+  },
+  buttonView: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   button: {
     display: 'flex',
-    flexDirection: 'row',
-    width: '70%',
-    backgroundColor: COLORS.buttonColor,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 20,
-    borderRadius: 10,
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 32,
-    fontWeight: 'bold',
-  },
-  label: {
-    marginVertical: 20,
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  image: {
-    width: 200,
-    height: 200,
-    marginTop: 20,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    paddingHorizontal: SPACING.space_20,
+    paddingVertical: SPACING.space_10,
+    backgroundColor: '',
   },
 });
 

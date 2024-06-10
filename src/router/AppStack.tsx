@@ -1,18 +1,19 @@
 import React from 'react';
+import {StyleSheet} from 'react-native';
 
-import HomeScreen from '../screens/HomeScreen';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import TabButton from '../components/TabButton';
+import {COLORS} from '../theme/theme';
+import {BlurView} from '@react-native-community/blur';
+import Icon from 'react-native-vector-icons/AntDesign';
+
+import HomeStack from './HomeStack';
 import HistoryScreen from '../screens/HistoryScreen';
 import SettingsScreen from '../screens/SettingScreen';
 import OtherScreen from '../screens/OtherScreen';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-
-import Icon from 'react-native-vector-icons/AntDesign';
-import {COLORS} from '../theme/theme';
-import {StyleSheet} from 'react-native';
-import TabButton from '../components/TabButton';
 
 export type AppStackParamsList = {
-  HomeScreen: undefined;
+  HomeStack: undefined;
   HistoryScreen: undefined;
   SettingScreen: undefined;
   OtherScreen: undefined;
@@ -28,13 +29,24 @@ export default function AppStack() {
         tabBarHideOnKeyboard: true,
         tabBarShowLabel: false,
         tabBarStyle: styles.tabBarStyle,
+        tabBarBackground: () => (
+          <BlurView
+            overlayColor=""
+            blurAmount={15}
+            style={styles.BlurViewStyle}
+          />
+        ),
       }}>
       <stack.Screen
-        name="HomeScreen"
-        component={HomeScreen}
+        name="HomeStack"
+        component={HomeStack}
         options={{
-          tabBarButton: ({onFocus, onPress}) => (
-            <TabButton icon={'cloud'} onFocus={onFocus} onPress={onPress} />
+          tabBarIcon: ({focused, color, size}) => (
+            <Icon
+              name="home"
+              size={30}
+              color={focused ? COLORS.primaryOrangeHex : COLORS.primaryGreyHex}
+            />
           ),
         }}
       />

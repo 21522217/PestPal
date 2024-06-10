@@ -48,6 +48,7 @@ interface Color {
   primaryBlackRGBA: string;
   secondaryBlackRGBA: string;
   mainBackground: string;
+  mainBackgroundSecond: string;
   bottomBarColor: string;
   buttonColor: string;
 }
@@ -65,7 +66,8 @@ export const COLORS: Color = {
   primaryWhiteHex: '#FFFFFF',
   primaryBlackRGBA: 'rgba(12,15,20,0.5)',
   secondaryBlackRGBA: 'rgba(0,0,0,0.7)',
-  mainBackground: '#3f1666',
+  mainBackground: '#4c008b',
+  mainBackgroundSecond: '#6f0034',
   bottomBarColor: '#ffc5f28d',
   buttonColor: '#8c5aff',
 };
