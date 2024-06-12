@@ -78,12 +78,12 @@ const HomeScreen: React.FC<{navigation: any}> = ({navigation}) => {
         </View>
         <View style={styles.buttonView}>
           <TouchableOpacity onPress={openCamera} style={styles.button}>
-            <Icon name="camera" size={30} style={styles.icon} />
+            <Icon color={COLORS.mainText} name="camera" size={40} />
             <Text style={styles.text}>Camera</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={openCamera} style={styles.button}>
-            <Icon name="camera" size={30} style={styles.icon} />
-            <Text>Library</Text>
+            <Icon color={COLORS.mainText} name="wallet" size={40} />
+            <Text style={styles.text}>Library</Text>
           </TouchableOpacity>
         </View>
       </LinearGradient>
@@ -100,18 +100,19 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     width: '100%',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
   },
   header: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 0.3,
+    flex: 0.1,
+    width: '100%',
   },
   headerText: {
     color: 'white',
-    fontSize: 40,
+    fontSize: 55,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
@@ -121,21 +122,41 @@ const styles = StyleSheet.create({
   },
   buttonView: {
     display: 'flex',
-    justifyContent: 'center',
+    flex: 0.3,
+    justifyContent: 'space-evenly',
     alignItems: 'center',
-    flex: 0.6,
+    width: '100%',
+    paddingHorizontal: 50,
   },
   button: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
+    width: '100%',
     paddingHorizontal: SPACING.space_20,
     paddingVertical: SPACING.space_10,
     backgroundColor: COLORS.buttonColor,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  icon: {},
-  text: {},
+  text: {
+    fontSize: 40,
+    fontFamily: 'Mulish',
+    alignSelf: 'center',
+    fontWeight: '900',
+    color: COLORS.mainText,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: 0, height: 2},
+    textShadowRadius: 2,
+  },
 });
 
 export default HomeScreen;

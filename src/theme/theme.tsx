@@ -51,6 +51,7 @@ interface Color {
   mainBackgroundSecond: string;
   bottomBarColor: string;
   buttonColor: string;
+  mainText: string;
 }
 
 export const COLORS: Color = {
@@ -69,7 +70,8 @@ export const COLORS: Color = {
   mainBackground: '#4c008b',
   mainBackgroundSecond: '#6f0034',
   bottomBarColor: '#46233e',
-  buttonColor: '#8c5aff',
+  buttonColor: '#48317f',
+  mainText: '#b58bbc',
 };
 
 interface FontFamily {

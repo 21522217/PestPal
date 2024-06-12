@@ -7,7 +7,7 @@ import ConfigModal from '../screens/ConfigModal';
 
 export type PestIdentifyStackParamsList = {
   HomeScreen: undefined;
-  ConfigModal: undefined;
+  ConfigModal: {imageUri: string | undefined};
 };
 
 const HomeStack = createNativeStackNavigator<PestIdentifyStackParamsList>();
@@ -19,7 +19,11 @@ const PestIdentifyStack = () => {
         headerShown: false,
       }}>
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
-      <HomeStack.Screen name="ConfigModal" component={ConfigModal} />
+      <HomeStack.Screen
+        name="ConfigModal"
+        component={ConfigModal}
+        options={{presentation: 'modal'}}
+      />
     </HomeStack.Navigator>
   );
 };

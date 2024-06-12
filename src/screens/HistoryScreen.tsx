@@ -4,13 +4,14 @@ import {
   Text,
   Image,
   StyleSheet,
-  ScrollView,
+  ActivityIndicator,
   TouchableOpacity,
   Modal,
   TextInput,
   FlatList,
   Dimensions,
 } from 'react-native';
+import useFetchDataPest, {Pest} from '../hooks/useFetchDataPest';
 import {useRoute, RouteProp} from '@react-navigation/native';
 import axios from 'axios';
 import {AppStackParamList, ImageType} from '../types';
@@ -25,30 +26,23 @@ const defaultImageUri =
 
 const HistoryScreen = () => {
   const route = useRoute<HistoryScreenRouteProp>();
-  const [descriptions, setDescriptions] = useState<ImageType[]>([]);
   const [selectedImage, setSelectedImage] = useState<ImageType | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredData, setFilteredData] = useState<ImageType[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const {pestData, loading} = useFetchDataPest();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = () => {
       try {
-        const response = await axios.get(
-          'https://pestpal-static-backend.onrender.com/pests',
-        );
-        const data = response.data.map((item: any) => ({
+        const data = pestData.map((item: Pest) => ({
           id: item.id,
           represent_image: item.represent_image,
           pest_name: item.pest_name,
           habitat: item.habitat,
           history: item.history,
           danger_scale: item.danger_scale,
-          additionalImages: [], // Assuming the API does not provide these yet
+          additionalImages: [],
         }));
-        setDescriptions(data);
-        setFilteredData(data);
       } catch (error) {
         console.error(error);
       }
@@ -57,25 +51,9 @@ const HistoryScreen = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (route.params?.images) {
-      setDescriptions(route.params.images);
-      setFilteredData(route.params.images);
-    }
-  }, [route.params]);
-
-  useEffect(() => {
-    setFilteredData(
-      descriptions.filter(image =>
-        image.pest_name.toLowerCase().includes(searchQuery.toLowerCase()),
-      ),
-    );
-  }, [searchQuery, descriptions]);
-
   const handleMoreInfo = (image: ImageType) => {
     setSelectedImage(image);
     setModalVisible(true);
-    setCurrentIndex(0);
   };
 
   const renderImageItem = ({item}: {item: ImageType}) => (
@@ -105,8 +83,6 @@ const HistoryScreen = () => {
     const slideSize = event.nativeEvent.layoutMeasurement.width;
     const index = event.nativeEvent.contentOffset.x / slideSize;
     const roundIndex = Math.round(index);
-
-    setCurrentIndex(roundIndex);
   };
 
   return (
@@ -121,47 +97,6 @@ const HistoryScreen = () => {
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
-      <FlatList
-        data={filteredData}
-        renderItem={renderImageItem}
-        keyExtractor={(item, index) => index.toString()}
-        contentContainerStyle={styles.listContainer}
-      />
-
-      <Modal visible={modalVisible} transparent={true} animationType="slide">
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity onPress={() => setModalVisible(false)}>
-              <Text style={styles.closeButton}>X</Text>
-            </TouchableOpacity>
-            {selectedImage && (
-              <>
-                <Text style={styles.modalTitle}>{selectedImage.pest_name}</Text>
-                <FlatList
-                  data={selectedImage.additionalImages}
-                  horizontal
-                  pagingEnabled
-                  renderItem={renderCarouselItem}
-                  keyExtractor={(item, index) => index.toString()}
-                  onScroll={handleScroll}
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.carouselContainer}
-                />
-                <Text style={styles.modalDescription}>
-                  {selectedImage.habitat}
-                </Text>
-                <Text style={styles.modalHistory}>{selectedImage.history}</Text>
-                <Text style={styles.modalDangerScale}>
-                  Danger Scale: {selectedImage.danger_scale}
-                </Text>
-                <Text style={styles.modalInfoLink}>
-                  Click for more Information on Google
-                </Text>
-              </>
-            )}
-          </View>
-        </View>
-      </Modal>
     </LinearGradient>
   );
 };
