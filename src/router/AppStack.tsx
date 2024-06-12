@@ -5,6 +5,7 @@ import HistoryScreen from '../screens/HistoryScreen';
 import SettingsScreen from '../screens/SettingScreen';
 import OtherScreen from '../screens/OtherScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import AboutUsScreen from '../screens/AboutUsScreen';
 
 import Icon from 'react-native-vector-icons/AntDesign';
 import {COLORS} from '../theme/theme';
@@ -16,6 +17,7 @@ export type AppStackParamsList = {
   HistoryScreen: undefined;
   SettingScreen: undefined;
   OtherScreen: undefined;
+  AboutUsScreen: undefined;
 };
 
 const stack = createBottomTabNavigator<AppStackParamsList>();
@@ -57,8 +59,8 @@ export default function AppStack() {
         }}
       />
       <stack.Screen
-        name="OtherScreen"
-        component={OtherScreen}
+        name="AboutUsScreen"
+        component={AboutUsScreen}
         options={{
           tabBarButton: ({onFocus, onPress}) => (
             <TabButton icon={'car'} onFocus={onFocus} onPress={onPress} />
