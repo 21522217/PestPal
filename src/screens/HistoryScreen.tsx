@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 import useFetchDataPest, {Pest} from '../hooks/useFetchDataPest';
 import {useRoute, RouteProp} from '@react-navigation/native';
-import axios from 'axios';
 import {AppStackParamList, ImageType} from '../types';
 import LinearGradient from 'react-native-linear-gradient';
 import {COLORS} from '../theme/theme';
@@ -22,11 +21,11 @@ type HistoryScreenRouteProp = RouteProp<AppStackParamList, 'HistoryScreen'>;
 
 const {width} = Dimensions.get('window');
 const defaultImageUri =
-  'https://i.pinimg.com/736x/fd/c3/4f/fdc34f1242de5e350ab92449f866e513.jpg'; // Replace with a valid default image URL
+  'https://i.pinimg.com/736x/fd/c3/4f/fdc34f1242de5e350ab92449f866e513.jpg';
 
 const HistoryScreen = () => {
   const route = useRoute<HistoryScreenRouteProp>();
-  const [selectedImage, setSelectedImage] = useState<ImageType | null>(null);
+  const [selectedImage, setSelectedImage] = useState<Pest | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const {pestData, loading} = useFetchDataPest();
@@ -51,12 +50,12 @@ const HistoryScreen = () => {
     fetchData();
   }, []);
 
-  const handleMoreInfo = (image: ImageType) => {
+  const handleMoreInfo = (image: Pest) => {
     setSelectedImage(image);
     setModalVisible(true);
   };
 
-  const renderImageItem = ({item}: {item: ImageType}) => (
+  const renderImageItem = ({item}: {item: Pest}) => (
     <View style={styles.card}>
       <Image
         source={{uri: item.represent_image || defaultImageUri}}
@@ -97,6 +96,7 @@ const HistoryScreen = () => {
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
+      <FlatList data={pestData} renderItem={renderImageItem} />
     </LinearGradient>
   );
 };
