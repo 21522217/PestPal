@@ -1,3 +1,5 @@
+import {Dimensions} from 'react-native';
+
 interface Spacing {
   space_2: number;
   space_4: number;
@@ -34,7 +36,7 @@ export const SPACING: Spacing = {
 
 interface Color {
   primaryRedHex: string;
-  primaryOrangeHex: string;
+  primaryBlueHex: string;
   primaryBlackHex: string;
   primaryDarkGreyHex: string;
   secondaryDarkGreyHex: string;
@@ -46,25 +48,27 @@ interface Color {
   primaryBlackRGBA: string;
   secondaryBlackRGBA: string;
   mainBackground: string;
+  mainBackgroundSecond: string;
   bottomBarColor: string;
   buttonColor: string;
 }
 
 export const COLORS: Color = {
   primaryRedHex: '#DC3535',
-  primaryOrangeHex: '#D17842',
+  primaryBlueHex: '#8186e8',
   primaryBlackHex: '#0C0F14',
   primaryDarkGreyHex: '#141921',
   secondaryDarkGreyHex: '#21262E',
-  primaryGreyHex: '#252A32',
+  primaryGreyHex: '#572851',
   secondaryGreyHex: '#252A32',
   primaryLightGreyHex: '#52555A',
   secondaryLightGreyHex: '#AEAEAE',
   primaryWhiteHex: '#FFFFFF',
   primaryBlackRGBA: 'rgba(12,15,20,0.5)',
   secondaryBlackRGBA: 'rgba(0,0,0,0.7)',
-  mainBackground: '#3f1666',
-  bottomBarColor: '#ffc5f28d',
+  mainBackground: '#4c008b',
+  mainBackgroundSecond: '#6f0034',
+  bottomBarColor: '#46233e',
   buttonColor: '#8c5aff',
 };
 
@@ -134,4 +138,14 @@ export const BORDERRADIUS: BorderRadius = {
   radius_15: 15,
   radius_20: 20,
   radius_25: 25,
+};
+
+interface ISCale {
+  screenWidth: Number;
+  screenHeight: Number;
+}
+
+export const SCALES: ISCale = {
+  screenWidth: Dimensions.get('window').width,
+  screenHeight: Dimensions.get('window').height,
 };

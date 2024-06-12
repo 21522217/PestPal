@@ -1,13 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Modal, TextInput, FlatList, Dimensions } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+  FlatList,
+  Dimensions,
+} from 'react-native';
+import {useRoute, RouteProp} from '@react-navigation/native';
 import axios from 'axios';
-import { AppStackParamList, ImageType } from '../types';  // Import the types
+import {AppStackParamList, ImageType} from '../types';
+import LinearGradient from 'react-native-linear-gradient';
+import {COLORS} from '../theme/theme';
 
 type HistoryScreenRouteProp = RouteProp<AppStackParamList, 'HistoryScreen'>;
 
-const { width } = Dimensions.get('window');
-const defaultImageUri = 'https://i.pinimg.com/736x/fd/c3/4f/fdc34f1242de5e350ab92449f866e513.jpg';  // Replace with a valid default image URL
+const {width} = Dimensions.get('window');
+const defaultImageUri =
+  'https://i.pinimg.com/736x/fd/c3/4f/fdc34f1242de5e350ab92449f866e513.jpg'; // Replace with a valid default image URL
 
 const HistoryScreen = () => {
   const route = useRoute<HistoryScreenRouteProp>();
@@ -21,7 +35,9 @@ const HistoryScreen = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://pestpal-static-backend.onrender.com/pests');
+        const response = await axios.get(
+          'https://pestpal-static-backend.onrender.com/pests',
+        );
         const data = response.data.map((item: any) => ({
           id: item.id,
           represent_image: item.represent_image,
@@ -37,7 +53,7 @@ const HistoryScreen = () => {
         console.error(error);
       }
     };
-    
+
     fetchData();
   }, []);
 
@@ -51,8 +67,8 @@ const HistoryScreen = () => {
   useEffect(() => {
     setFilteredData(
       descriptions.filter(image =>
-        image.pest_name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+        image.pest_name.toLowerCase().includes(searchQuery.toLowerCase()),
+      ),
     );
   }, [searchQuery, descriptions]);
 
@@ -62,12 +78,17 @@ const HistoryScreen = () => {
     setCurrentIndex(0);
   };
 
-  const renderImageItem = ({ item }: { item: ImageType }) => (
+  const renderImageItem = ({item}: {item: ImageType}) => (
     <View style={styles.card}>
-      <Image source={{ uri: item.represent_image || defaultImageUri }} style={styles.image} />
+      <Image
+        source={{uri: item.represent_image || defaultImageUri}}
+        style={styles.image}
+      />
       <View style={styles.textContainer}>
         <Text style={styles.title}>{item.pest_name}</Text>
-        <Text style={styles.dangerScale}>Danger Scale: {item.danger_scale}</Text>
+        <Text style={styles.dangerScale}>
+          Danger Scale: {item.danger_scale}
+        </Text>
         <Text style={styles.description}>{item.habitat}</Text>
         <TouchableOpacity onPress={() => handleMoreInfo(item)}>
           <Text style={styles.moreInfo}>More Information</Text>
@@ -76,8 +97,8 @@ const HistoryScreen = () => {
     </View>
   );
 
-  const renderCarouselItem = ({ item }: { item: string }) => (
-    <Image source={{ uri: item }} style={styles.modalImage} />
+  const renderCarouselItem = ({item}: {item: string}) => (
+    <Image source={{uri: item}} style={styles.modalImage} />
   );
 
   const handleScroll = (event: any) => {
@@ -89,7 +110,11 @@ const HistoryScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={[COLORS.mainBackground, COLORS.mainBackgroundSecond]}
+      start={{x: 0, y: 0}}
+      end={{x: 1, y: 1}}
+      style={styles.container}>
       <TextInput
         style={styles.searchBar}
         placeholder="Search..."
@@ -122,16 +147,22 @@ const HistoryScreen = () => {
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.carouselContainer}
                 />
-                <Text style={styles.modalDescription}>{selectedImage.habitat}</Text>
+                <Text style={styles.modalDescription}>
+                  {selectedImage.habitat}
+                </Text>
                 <Text style={styles.modalHistory}>{selectedImage.history}</Text>
-                <Text style={styles.modalDangerScale}>Danger Scale: {selectedImage.danger_scale}</Text>
-                <Text style={styles.modalInfoLink}>Click for more Information on Google</Text>
+                <Text style={styles.modalDangerScale}>
+                  Danger Scale: {selectedImage.danger_scale}
+                </Text>
+                <Text style={styles.modalInfoLink}>
+                  Click for more Information on Google
+                </Text>
               </>
             )}
           </View>
         </View>
       </Modal>
-    </View>
+    </LinearGradient>
   );
 };
 

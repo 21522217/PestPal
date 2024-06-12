@@ -1,22 +1,21 @@
 import React from 'react';
+import {StyleSheet} from 'react-native';
 
-import HomeScreen from '../screens/HomeScreen';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import TabButton from '../components/TabButton';
+import {COLORS} from '../theme/theme';
+import {BlurView} from '@react-native-community/blur';
+import Icon from 'react-native-vector-icons/AntDesign';
+
+import HomeStack from './HomeStack';
 import HistoryScreen from '../screens/HistoryScreen';
 import SettingsScreen from '../screens/SettingScreen';
-import OtherScreen from '../screens/OtherScreen';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AboutUsScreen from '../screens/AboutUsScreen';
 
-import Icon from 'react-native-vector-icons/AntDesign';
-import {COLORS} from '../theme/theme';
-import {StyleSheet} from 'react-native';
-import TabButton from '../components/TabButton';
-
 export type AppStackParamsList = {
-  HomeScreen: undefined;
+  HomeStack: undefined;
   HistoryScreen: undefined;
   SettingScreen: undefined;
-  OtherScreen: undefined;
   AboutUsScreen: undefined;
 };
 
@@ -30,13 +29,24 @@ export default function AppStack() {
         tabBarHideOnKeyboard: true,
         tabBarShowLabel: false,
         tabBarStyle: styles.tabBarStyle,
+        tabBarBackground: () => (
+          <BlurView
+            overlayColor=""
+            blurAmount={15}
+            style={styles.blurViewStyle}
+          />
+        ),
       }}>
       <stack.Screen
-        name="HomeScreen"
-        component={HomeScreen}
+        name="HomeStack"
+        component={HomeStack}
         options={{
-          tabBarButton: ({onFocus, onPress}) => (
-            <TabButton icon={'cloud'} onFocus={onFocus} onPress={onPress} />
+          tabBarIcon: ({focused, color, size}) => (
+            <Icon
+              name="home"
+              size={30}
+              color={focused ? COLORS.primaryBlueHex : COLORS.primaryGreyHex}
+            />
           ),
         }}
       />
@@ -44,8 +54,12 @@ export default function AppStack() {
         name="HistoryScreen"
         component={HistoryScreen}
         options={{
-          tabBarButton: ({onFocus, onPress}) => (
-            <TabButton icon={'home'} onFocus={onFocus} onPress={onPress} />
+          tabBarIcon: ({focused, color, size}) => (
+            <Icon
+              name="book"
+              size={30}
+              color={focused ? COLORS.primaryBlueHex : COLORS.primaryGreyHex}
+            />
           ),
         }}
       />
@@ -53,8 +67,12 @@ export default function AppStack() {
         name="SettingScreen"
         component={SettingsScreen}
         options={{
-          tabBarButton: ({onFocus, onPress}) => (
-            <TabButton icon={'staro'} onFocus={onFocus} onPress={onPress} />
+          tabBarIcon: ({focused, color, size}) => (
+            <Icon
+              name="setting"
+              size={30}
+              color={focused ? COLORS.primaryBlueHex : COLORS.primaryGreyHex}
+            />
           ),
         }}
       />
@@ -62,8 +80,12 @@ export default function AppStack() {
         name="AboutUsScreen"
         component={AboutUsScreen}
         options={{
-          tabBarButton: ({onFocus, onPress}) => (
-            <TabButton icon={'car'} onFocus={onFocus} onPress={onPress} />
+          tabBarIcon: ({focused, color, size}) => (
+            <Icon
+              name="bells"
+              size={30}
+              color={focused ? COLORS.primaryBlueHex : COLORS.primaryGreyHex}
+            />
           ),
         }}
       />
@@ -74,13 +96,21 @@ export default function AppStack() {
 const styles = StyleSheet.create({
   tabBarStyle: {
     position: 'absolute',
+    bottom: 20,
+    marginHorizontal: 20,
     height: 60,
-    borderTopWidth: 0,
-    elevation: 0,
     backgroundColor: COLORS.bottomBarColor,
-    borderTopColor: 'transparent',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: 50,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    overflow: 'hidden',
   },
-  BlurViewStyle: {
+  blurViewStyle: {
     position: 'absolute',
     top: 0,
     bottom: 0,
