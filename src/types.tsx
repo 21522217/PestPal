@@ -1,9 +1,11 @@
 
 export type ImageType = {
-  uri: string;
-  title: string;
-  description: string;
-  additionalInfo: string;
+  id: string;
+  represent_image: string | null;
+  pest_name: string;
+  habitat: string;
+  history: string;
+  danger_scale: string;
   additionalImages: string[];
 };
 
@@ -14,7 +16,7 @@ export type ImageType1 = {
 
 export type AppStackParamList = {
   HomeScreen: undefined;
-  HistoryScreen: { images: ImageType[] };
+  HistoryScreen: { images: ImageType[] } | undefined;
   SettingScreen: undefined;
   OtherScreen: undefined;
 };

@@ -1,56 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Modal, TextInput, FlatList, Dimensions } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
+import axios from 'axios';
 import { AppStackParamList, ImageType } from '../types';  // Import the types
 
 type HistoryScreenRouteProp = RouteProp<AppStackParamList, 'HistoryScreen'>;
 
 const { width } = Dimensions.get('window');
+const defaultImageUri = 'https://i.pinimg.com/736x/fd/c3/4f/fdc34f1242de5e350ab92449f866e513.jpg';  // Replace with a valid default image URL
 
 const HistoryScreen = () => {
   const route = useRoute<HistoryScreenRouteProp>();
-  const initialImages: ImageType[] = [
-    {
-      uri: 'https://live.staticflickr.com/3193/5847507111_b2c35c4864_b.jpg',
-      title: 'Bọ Hung',
-      description: 'Là 1 loài bọ',
-      additionalInfo: 'Là 1 loài bọ cánh cứng',
-      additionalImages: [
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJfm5igD508MEnPcQLMiiEntRfWiMLypTdxA&s',
-        'https://live.staticflickr.com/3193/5847507111_b2c35c4864_b.jpg',
-        'https://www.mdpi.com/insects/insects-15-00165/article_deploy/html/images/insects-15-00165-g030-550.jpg'
-      ]
-    },
-    {
-      uri: 'https://live.staticflickr.com/3193/5847507111_b2c35c4864_b.jpg',
-      title: 'Dọ Hung',
-      description: 'Là 1 loài bọ',
-      additionalInfo: 'Là 1 loài bọ cánh cứng',
-      additionalImages: [
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJfm5igD508MEnPcQLMiiEntRfWiMLypTdxA&s',
-        'https://live.staticflickr.com/3193/5847507111_b2c35c4864_b.jpg',
-        'https://www.mdpi.com/insects/insects-15-00165/article_deploy/html/images/insects-15-00165-g030-550.jpg'
-      ]
-    },
-    {
-      uri: 'https://live.staticflickr.com/3193/5847507111_b2c35c4864_b.jpg',
-      title: 'Cọ Hung',
-      description: 'Là 1 loài bọ',
-      additionalInfo: 'Là 1 loài bọ cánh cứng',
-      additionalImages: [
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJfm5igD508MEnPcQLMiiEntRfWiMLypTdxA&s',
-        'https://live.staticflickr.com/3193/5847507111_b2c35c4864_b.jpg',
-        'https://www.mdpi.com/insects/insects-15-00165/article_deploy/html/images/insects-15-00165-g030-550.jpg'
-      ]
-    },
-  ];
-
-  const [descriptions, setDescriptions] = useState<ImageType[]>(initialImages);
+  const [descriptions, setDescriptions] = useState<ImageType[]>([]);
   const [selectedImage, setSelectedImage] = useState<ImageType | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredData, setFilteredData] = useState<ImageType[]>(initialImages);
+  const [filteredData, setFilteredData] = useState<ImageType[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://pestpal-static-backend.onrender.com/pests');
+        const data = response.data.map((item: any) => ({
+          id: item.id,
+          represent_image: item.represent_image,
+          pest_name: item.pest_name,
+          habitat: item.habitat,
+          history: item.history,
+          danger_scale: item.danger_scale,
+          additionalImages: [], // Assuming the API does not provide these yet
+        }));
+        setDescriptions(data);
+        setFilteredData(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (route.params?.images) {
@@ -62,7 +51,7 @@ const HistoryScreen = () => {
   useEffect(() => {
     setFilteredData(
       descriptions.filter(image =>
-        image.title.toLowerCase().includes(searchQuery.toLowerCase())
+        image.pest_name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     );
   }, [searchQuery, descriptions]);
@@ -75,10 +64,11 @@ const HistoryScreen = () => {
 
   const renderImageItem = ({ item }: { item: ImageType }) => (
     <View style={styles.card}>
-      <Image source={{ uri: item.uri }} style={styles.image} />
+      <Image source={{ uri: item.represent_image || defaultImageUri }} style={styles.image} />
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.description}>{item.description}</Text>
+        <Text style={styles.title}>{item.pest_name}</Text>
+        <Text style={styles.dangerScale}>Danger Scale: {item.danger_scale}</Text>
+        <Text style={styles.description}>{item.habitat}</Text>
         <TouchableOpacity onPress={() => handleMoreInfo(item)}>
           <Text style={styles.moreInfo}>More Information</Text>
         </TouchableOpacity>
@@ -121,7 +111,7 @@ const HistoryScreen = () => {
             </TouchableOpacity>
             {selectedImage && (
               <>
-                <Text style={styles.modalTitle}>{selectedImage.title}</Text>
+                <Text style={styles.modalTitle}>{selectedImage.pest_name}</Text>
                 <FlatList
                   data={selectedImage.additionalImages}
                   horizontal
@@ -132,7 +122,9 @@ const HistoryScreen = () => {
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.carouselContainer}
                 />
-                <Text style={styles.modalDescription}>{selectedImage.additionalInfo}</Text>
+                <Text style={styles.modalDescription}>{selectedImage.habitat}</Text>
+                <Text style={styles.modalHistory}>{selectedImage.history}</Text>
+                <Text style={styles.modalDangerScale}>Danger Scale: {selectedImage.danger_scale}</Text>
                 <Text style={styles.modalInfoLink}>Click for more Information on Google</Text>
               </>
             )}
@@ -188,6 +180,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
+  dangerScale: {
+    fontSize: 14,
+    color: 'red',
+    marginTop: 5,
+  },
   description: {
     fontSize: 14,
     color: '#666',
@@ -238,6 +235,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 10,
     color: '#666',
+  },
+  modalHistory: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 10,
+    color: '#666',
+  },
+  modalDangerScale: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 10,
+    color: 'red',
   },
   modalInfoLink: {
     fontSize: 14,
