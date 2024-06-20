@@ -1,71 +1,98 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { COLORS } from '../theme/theme';
+import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { Avatar, Button, Text, Card, Icon } from 'react-native-elements';
+import LinearGradient from 'react-native-linear-gradient';
 
 const { width } = Dimensions.get('window');
 
 const SettingsScreen: React.FC = () => {
   return (
-    <View style={styles.container}>
-      <Image source={require('../assets/profile-icon.png')} style={styles.profileIcon} />
-      <Text style={styles.name}>Yoku Pham</Text>
-      <Text style={styles.info}>info</Text>
-      <Text style={styles.info}>info</Text>
-      <Text style={styles.info}>info</Text>
-      <TouchableOpacity style={styles.settingsButton}>
-        <Image source={require('../assets/settings-icon.png')} style={styles.settingsIcon} />
-        <Text style={styles.settingsText}>Settings</Text>
-      </TouchableOpacity>
-    </View>
+    <LinearGradient colors={['#c299f2', '#b399f2']} style={styles.linearGradient}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Avatar
+          rounded
+          source={require('../assets/profile-icon.png')}
+          size="xlarge"
+          containerStyle={styles.profileIcon}
+        />
+        <Text style={styles.name}>Yoku Pham</Text>
+        <Card containerStyle={styles.infoCard}>
+          <Text style={styles.info}>Info 1</Text>
+          <Text style={styles.info}>Info 2</Text>
+          <Text style={styles.info}>Info 3</Text>
+        </Card>
+        <Button
+          title="Settings"
+          icon={
+            <Icon
+              name="settings"
+              type="material"
+              size={24}
+              color="white"
+              style={styles.settingsIcon}
+            />
+          }
+          buttonStyle={styles.settingsButton}
+          titleStyle={styles.settingsText}
+          onPress={() => console.log('Navigate to settings')}
+        />
+      </ScrollView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  linearGradient: {
     flex: 1,
-    justifyContent: 'flex-start',
+  },
+  container: {
+    flexGrow: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#c299f2',
+    padding: 20,
   },
   profileIcon: {
-    width: 150,
-    height: 150,
     marginBottom: 20,
     marginTop: 50,
-    borderRadius: 75,
   },
   name: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 20,
     textAlign: 'center',
     color: '#333',
+  },
+  infoCard: {
+    width: width * 0.9,
+    borderRadius: 15,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
+    backgroundColor: 'white',
+    marginBottom: 30,
   },
   info: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 5,
+    marginBottom: 10,
     textAlign: 'center',
   },
   settingsButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 15,
-    marginBottom: 50,
-    backgroundColor: COLORS.buttonColor,
     borderRadius: 30,
     width: width * 0.8,
-    justifyContent: 'center',
-  },
-  settingsIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
+    paddingVertical: 15,
+    backgroundColor: '#6A1B9A',
   },
   settingsText: {
     fontSize: 18,
     color: 'white',
     fontWeight: 'bold',
+    marginLeft: 10,
+  },
+  settingsIcon: {
+    marginRight: 10,
   },
 });
 
