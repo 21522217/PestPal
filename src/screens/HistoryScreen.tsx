@@ -1,39 +1,56 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   Image,
   StyleSheet,
-  ActivityIndicator,
+  FlatList,
   TouchableOpacity,
   Modal,
   TextInput,
-  FlatList,
   Dimensions,
+  Animated,
+  Easing,
 } from 'react-native';
-import useFetchDataPest, {Pest} from '../hooks/useFetchDataPest';
-import {useRoute, RouteProp} from '@react-navigation/native';
-import {AppStackParamList, ImageType} from '../types';
-import LinearGradient from 'react-native-linear-gradient';
-import {COLORS} from '../theme/theme';
+import { useRoute, RouteProp } from '@react-navigation/native';
+import axios from 'axios';
+import { AppStackParamList, ImageType } from '../types';
+import * as Progress from 'react-native-progress'; // Import the Progress library
 
 type HistoryScreenRouteProp = RouteProp<AppStackParamList, 'HistoryScreen'>;
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const defaultImageUri =
   'https://i.pinimg.com/736x/fd/c3/4f/fdc34f1242de5e350ab92449f866e513.jpg';
 
 const HistoryScreen = () => {
   const route = useRoute<HistoryScreenRouteProp>();
-  const [selectedImage, setSelectedImage] = useState<Pest | null>(null);
+  const [descriptions, setDescriptions] = useState<ImageType[]>([]);
+  const [selectedImage, setSelectedImage] = useState<ImageType | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const {pestData, loading} = useFetchDataPest();
+  const [filteredData, setFilteredData] = useState<ImageType[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true); // Loading state for the ActivityIndicator
+  const [progress, setProgress] = useState(0); // Progress state for the progress bar
+
+  const cardBackgroundColor = useState(new Animated.Value(0))[0];
 
   useEffect(() => {
-    const fetchData = () => {
+    const fetchData = async () => {
       try {
-        const data = pestData.map((item: Pest) => ({
+        setProgress(0); // Reset progress
+        const response = await axios.get(
+          'https://pestpal-static-backend.onrender.com/pests',
+          {
+            onDownloadProgress: (progressEvent) => {
+              const totalLength = progressEvent?.total || 1;
+              const currentLength = progressEvent?.loaded || 0;
+              setProgress(currentLength / totalLength); // Update progress
+            },
+          }
+        );
+        const data = response.data.map((item: any) => ({
           id: item.id,
           represent_image: item.represent_image,
           pest_name: item.pest_name,
@@ -42,62 +59,163 @@ const HistoryScreen = () => {
           danger_scale: item.danger_scale,
           additionalImages: [],
         }));
+        setDescriptions(data);
+        setFilteredData(data);
+        setLoading(false); // Data is loaded, set loading to false
       } catch (error) {
         console.error(error);
+        setLoading(false); // In case of error, set loading to false
       }
     };
 
     fetchData();
   }, []);
 
-  const handleMoreInfo = (image: Pest) => {
+  useEffect(() => {
+    if (route.params?.images) {
+      setDescriptions(route.params.images);
+      setFilteredData(route.params.images);
+      setLoading(false); // Data is loaded, set loading to false
+    }
+  }, [route.params]);
+
+  useEffect(() => {
+    setFilteredData(
+      descriptions.filter((image) =>
+        image.pest_name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  }, [searchQuery, descriptions]);
+
+  const handleMoreInfo = (image: ImageType) => {
     setSelectedImage(image);
     setModalVisible(true);
+    setCurrentIndex(0);
   };
 
-  const renderImageItem = ({item}: {item: Pest}) => (
-    <View style={styles.card}>
+  const startCardAnimation = () => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(cardBackgroundColor, {
+          toValue: 1,
+          duration: 2000,
+          easing: Easing.ease,
+          useNativeDriver: false,
+        }),
+        Animated.timing(cardBackgroundColor, {
+          toValue: 0,
+          duration: 2000,
+          easing: Easing.ease,
+          useNativeDriver: false,
+        }),
+      ])
+    ).start();
+  };
+
+  useEffect(() => {
+    startCardAnimation();
+  }, []);
+
+  const backgroundColorInterpolate = cardBackgroundColor.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['#ffffff', '#f0f0f0'], // More noticeable color change
+  });
+
+  const renderImageItem = ({ item }: { item: ImageType }) => (
+    <Animated.View
+      style={[styles.card, { backgroundColor: backgroundColorInterpolate }]}
+    >
       <Image
-        source={{uri: item.represent_image || defaultImageUri}}
+        source={{ uri: item.represent_image || defaultImageUri }}
         style={styles.image}
       />
       <View style={styles.textContainer}>
         <Text style={styles.title}>{item.pest_name}</Text>
-        <Text style={styles.dangerScale}>
-          Danger Scale: {item.danger_scale}
-        </Text>
+        <Text style={styles.dangerScale}>Danger Scale: {item.danger_scale}</Text>
         <Text style={styles.description}>{item.habitat}</Text>
         <TouchableOpacity onPress={() => handleMoreInfo(item)}>
           <Text style={styles.moreInfo}>More Information</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </Animated.View>
   );
 
-  const renderCarouselItem = ({item}: {item: string}) => (
-    <Image source={{uri: item}} style={styles.modalImage} />
+  const renderCarouselItem = ({ item }: { item: string }) => (
+    <Image source={{ uri: item }} style={styles.modalImage} />
   );
 
   const handleScroll = (event: any) => {
     const slideSize = event.nativeEvent.layoutMeasurement.width;
     const index = event.nativeEvent.contentOffset.x / slideSize;
     const roundIndex = Math.round(index);
+
+    setCurrentIndex(roundIndex);
   };
 
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Progress.Circle
+          size={100}
+          progress={progress}
+          showsText={true}
+          color="#6a0dad"
+          thickness={8}
+        />
+      </View>
+    );
+  }
+
   return (
-    <LinearGradient
-      colors={[COLORS.mainBackground, COLORS.mainBackgroundSecond]}
-      start={{x: 0, y: 0}}
-      end={{x: 1, y: 1}}
-      style={styles.container}>
+    <View style={styles.container}>
       <TextInput
         style={styles.searchBar}
         placeholder="Search..."
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
-      <FlatList data={pestData} renderItem={renderImageItem} />
-    </LinearGradient>
+      <FlatList
+        data={filteredData}
+        renderItem={renderImageItem}
+        keyExtractor={(item, index) => index.toString()}
+        contentContainerStyle={styles.listContainer}
+      />
+
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Text style={styles.closeButton}>X</Text>
+            </TouchableOpacity>
+            {selectedImage && (
+              <>
+                <Text style={styles.modalTitle}>{selectedImage.pest_name}</Text>
+                <FlatList
+                  data={selectedImage.additionalImages}
+                  horizontal
+                  pagingEnabled
+                  renderItem={renderCarouselItem}
+                  keyExtractor={(item, index) => index.toString()}
+                  onScroll={handleScroll}
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.carouselContainer}
+                />
+                <Text style={styles.modalDescription}>
+                  {selectedImage.habitat}
+                </Text>
+                <Text style={styles.modalHistory}>{selectedImage.history}</Text>
+                <Text style={styles.modalDangerScale}>
+                  Danger Scale: {selectedImage.danger_scale}
+                </Text>
+                <Text style={styles.modalInfoLink}>
+                  Click for more Information on Google
+                </Text>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+    </View>
   );
 };
 
@@ -114,22 +232,32 @@ const styles = StyleSheet.create({
     margin: 10,
     paddingLeft: 15,
     backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
   },
   listContainer: {
     alignItems: 'center',
+    paddingBottom: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#c299f2',
   },
   card: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
-    borderRadius: 10,
+    borderRadius: 15,
     padding: 10,
     marginTop: 20,
     marginBottom: 20,
     width: '90%',
     shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 3,
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
   },
   image: {
     width: 100,
@@ -142,24 +270,29 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#2c3e50',
+    fontFamily: 'Arial',
+    letterSpacing: 1.2,
   },
   dangerScale: {
-    fontSize: 14,
+    fontSize: 16,
     color: 'red',
     marginTop: 5,
+    fontFamily: 'Arial',
   },
   description: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 16,
+    color: '#34495e',
     marginTop: 5,
+    fontFamily: 'Arial',
   },
   moreInfo: {
     marginTop: 5,
     color: '#1E90FF',
     textDecorationLine: 'underline',
+    fontFamily: 'Arial',
   },
   modalContainer: {
     flex: 1,
@@ -170,7 +303,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: '90%',
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 15,
     padding: 20,
     alignItems: 'center',
   },
@@ -181,15 +314,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#333',
+    color: '#2c3e50',
+    fontFamily: 'Arial',
+    letterSpacing: 1.2,
   },
   modalImage: {
     width: width * 0.8,
     height: width * 0.8,
-    borderRadius: 10,
+    borderRadius: 15,
     margin: 5,
     resizeMode: 'cover',
   },
@@ -197,27 +332,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalDescription: {
-    fontSize: 16,
+    fontSize: 18,
     textAlign: 'center',
     marginBottom: 10,
-    color: '#666',
+    color: '#34495e',
+    fontFamily: 'Arial',
   },
   modalHistory: {
-    fontSize: 16,
+    fontSize: 18,
     textAlign: 'center',
     marginBottom: 10,
-    color: '#666',
+    color: '#34495e',
+    fontFamily: 'Arial',
   },
   modalDangerScale: {
-    fontSize: 16,
+    fontSize: 18,
     textAlign: 'center',
     marginBottom: 10,
     color: 'red',
+    fontFamily: 'Arial',
   },
   modalInfoLink: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#1E90FF',
     textDecorationLine: 'underline',
+    fontFamily: 'Arial',
   },
 });
 
