@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { Avatar, Button, Text, Card, Icon } from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
+import { COLORS } from '../theme/theme';
 
 const { width } = Dimensions.get('window');
 
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     width: width * 0.8,
     paddingVertical: 15,
-    backgroundColor: '#6A1B9A',
+    backgroundColor: COLORS.buttonColor,
   },
   settingsText: {
     fontSize: 18,

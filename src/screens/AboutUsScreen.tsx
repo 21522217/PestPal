@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import { Card } from 'react-native-elements';
 import { COLORS } from '../theme/theme';
 
 const { width } = Dimensions.get('window');
@@ -13,18 +14,20 @@ const AboutUsScreen: React.FC = () => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>About Us</Text>
-        <Text style={styles.paragraph}>
-          Welcome to PestPal, your ultimate resource for pest identification and information. Our mission is to provide comprehensive and reliable data on various pests, helping you understand and manage them effectively. 
-        </Text>
-        <Text style={styles.paragraph}>
-          At PestPal, we believe that knowledge is power. Our team of experts and enthusiasts work tirelessly to gather and verify information about pests, their habitats, histories, and dangers. Whether you are a homeowner, gardener, farmer, or just curious, PestPal is here to assist you with all your pest-related queries.
-        </Text>
-        <Text style={styles.paragraph}>
-          Our database is constantly updated to ensure you have access to the latest findings and insights. We aim to empower you with the knowledge you need to keep your environment safe and pest-free.
-        </Text>
-        <Text style={styles.paragraph}>
-          Thank you for choosing PestPal. Together, we can make pest management easier and more effective.
-        </Text>
+        <Card containerStyle={styles.infoCard}>
+          <Text style={styles.paragraph}>
+            Welcome to PestPal, your ultimate resource for pest identification and information. Our mission is to provide comprehensive and reliable data on various pests, helping you understand and manage them effectively. 
+          </Text>
+          <Text style={styles.paragraph}>
+            At PestPal, we believe that knowledge is power. Our team of experts and enthusiasts work tirelessly to gather and verify information about pests, their habitats, histories, and dangers. Whether you are a homeowner, gardener, farmer, or just curious, PestPal is here to assist you with all your pest-related queries.
+          </Text>
+          <Text style={styles.paragraph}>
+            Our database is constantly updated to ensure you have access to the latest findings and insights. We aim to empower you with the knowledge you need to keep your environment safe and pest-free.
+          </Text>
+          <Text style={styles.paragraph}>
+            Thank you for choosing PestPal. Together, we can make pest management easier and more effective.
+          </Text>
+        </Card>
       </ScrollView>
       <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
         <Text style={styles.buttonText}>Learn More</Text>
@@ -39,14 +42,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#c299f2',
   },
   scrollContainer: {
-    padding: 20,
+    padding: 7,
     paddingBottom: 80, 
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 20,
+    marginBottom: 10,
+    textAlign: 'center',
+    marginTop: 10,
   },
   paragraph: {
     fontSize: 16,
@@ -56,7 +61,7 @@ const styles = StyleSheet.create({
   },
   button: {
     position: 'absolute',
-    bottom: 200,
+    bottom: 100,
     left: width * 0.1,
     right: width * 0.1,
     backgroundColor: COLORS.buttonColor,
@@ -69,6 +74,16 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  infoCard: {
+    width: width * 0.9,
+    borderRadius: 15,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    backgroundColor: 'white',
+    marginBottom: 20,
+   },
 });
 
 export default AboutUsScreen;

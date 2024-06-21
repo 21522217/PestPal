@@ -16,6 +16,9 @@ import { useRoute, RouteProp } from '@react-navigation/native';
 import axios from 'axios';
 import { AppStackParamList, ImageType } from '../types';
 import * as Progress from 'react-native-progress'; // Import the Progress library
+import Icon from 'react-native-vector-icons/AntDesign';
+import {COLORS} from '../theme/theme';
+import { Card } from 'react-native-elements';
 
 type HistoryScreenRouteProp = RouteProp<AppStackParamList, 'HistoryScreen'>;
 
@@ -57,7 +60,7 @@ const HistoryScreen = () => {
           habitat: item.habitat,
           history: item.history,
           danger_scale: item.danger_scale,
-          additionalImages: [],
+          additionalImages: [defaultImageUri, defaultImageUri, defaultImageUri],
         }));
         setDescriptions(data);
         setFilteredData(data);
@@ -174,6 +177,8 @@ const HistoryScreen = () => {
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
+      <Icon style={styles.searchIcon} color={COLORS.mainText} name="search1" size={40} />
+
       <FlatList
         data={filteredData}
         renderItem={renderImageItem}
@@ -185,7 +190,7 @@ const HistoryScreen = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <TouchableOpacity onPress={() => setModalVisible(false)}>
-              <Text style={styles.closeButton}>X</Text>
+              <Icon style={styles.closeButton} color={'black'} name="closesquare" />
             </TouchableOpacity>
             {selectedImage && (
               <>
@@ -200,13 +205,18 @@ const HistoryScreen = () => {
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.carouselContainer}
                 />
-                <Text style={styles.modalDescription}>
-                  {selectedImage.habitat}
-                </Text>
-                <Text style={styles.modalHistory}>{selectedImage.history}</Text>
-                <Text style={styles.modalDangerScale}>
-                  Danger Scale: {selectedImage.danger_scale}
-                </Text>
+                <Card containerStyle={styles.infoCard}>
+                  <Text style={styles.modalDescription}>
+                    {selectedImage.habitat}
+                  </Text>
+                  <Text style={styles.modalHistory}>{selectedImage.history}</Text>
+                </Card>
+                <Card containerStyle={styles.dangerCard}>
+                  <Text style={styles.modalDangerScale}>
+                    Danger Scale: {selectedImage.danger_scale}
+                  </Text>
+                </Card>
+
                 <Text style={styles.modalInfoLink}>
                   Click for more Information on Google
                 </Text>
@@ -237,6 +247,13 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
   },
+  searchIcon: {
+    position: 'absolute',
+    right: 20,
+    top: 20,
+    fontSize: 20,
+    color: 'gray',
+  },
   listContainer: {
     alignItems: 'center',
     paddingBottom: 20,
@@ -258,6 +275,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 5,
+  },
+  infoCard: {
+    // backgroundColor: '#c299f2',
+    borderRadius: 15,
+    marginBottom: 20,
+    marginHorizontal: -24,
+  },
+  dangerCard: {
+    backgroundColor: '#ef6351',
+    borderRadius: 15,
+    marginBottom: 20,
   },
   image: {
     width: 100,
@@ -308,8 +336,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   closeButton: {
-    alignSelf: 'flex-end',
-    fontSize: 18,
+    left: 160,
+    fontSize: 30,
     color: 'black',
     marginBottom: 10,
   },
@@ -341,15 +369,13 @@ const styles = StyleSheet.create({
   modalHistory: {
     fontSize: 18,
     textAlign: 'center',
-    marginBottom: 10,
     color: '#34495e',
     fontFamily: 'Arial',
   },
   modalDangerScale: {
     fontSize: 18,
     textAlign: 'center',
-    marginBottom: 10,
-    color: 'red',
+    color: 'black',
     fontFamily: 'Arial',
   },
   modalInfoLink: {

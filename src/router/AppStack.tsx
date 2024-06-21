@@ -96,16 +96,12 @@ export default function AppStack() {
 const styles = StyleSheet.create({
   tabBarStyle: {
     position: 'absolute',
-    bottom: 20,
-    marginHorizontal: 20,
     height: 60,
     backgroundColor: COLORS.bottomBarColor,
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 50,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
     overflow: 'hidden',

@@ -69,9 +69,9 @@ export const COLORS: Color = {
   secondaryBlackRGBA: 'rgba(0,0,0,0.7)',
   mainBackground: '#4c008b',
   mainBackgroundSecond: '#6f0034',
-  bottomBarColor: '#46233e',
+  bottomBarColor: '#D8E9E9',
   buttonColor: '#48317f',
-  mainText: '#b58bbc',
+  mainText: '#F1E8F2',
 };
 
 interface FontFamily {
