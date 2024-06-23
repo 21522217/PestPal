@@ -11,11 +11,11 @@ import {
   Dimensions,
   Animated,
   Easing,
+  ActivityIndicator,
 } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import axios from 'axios';
 import { AppStackParamList, ImageType } from '../types';
-import * as Progress from 'react-native-progress'; // Import the Progress library
 import Icon from 'react-native-vector-icons/AntDesign';
 import {COLORS} from '../theme/theme';
 import { Card } from 'react-native-elements';
@@ -35,23 +35,15 @@ const HistoryScreen = () => {
   const [filteredData, setFilteredData] = useState<ImageType[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true); // Loading state for the ActivityIndicator
-  const [progress, setProgress] = useState(0); // Progress state for the progress bar
 
   const cardBackgroundColor = useState(new Animated.Value(0))[0];
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setProgress(0); // Reset progress
+        setLoading(true); // Ensure loading state is true at the start
         const response = await axios.get(
-          'https://pestpal-static-backend.onrender.com/pests',
-          {
-            onDownloadProgress: (progressEvent) => {
-              const totalLength = progressEvent?.total || 1;
-              const currentLength = progressEvent?.loaded || 0;
-              setProgress(currentLength / totalLength); // Update progress
-            },
-          }
+          'https://pestpal-static-backend.onrender.com/pests'
         );
         const data = response.data.map((item: any) => ({
           id: item.id,
@@ -64,10 +56,10 @@ const HistoryScreen = () => {
         }));
         setDescriptions(data);
         setFilteredData(data);
-        setLoading(false); // Data is loaded, set loading to false
       } catch (error) {
         console.error(error);
-        setLoading(false); // In case of error, set loading to false
+      } finally {
+        setLoading(false); // Ensure loading state is set to false after fetch attempt
       }
     };
 
@@ -158,13 +150,7 @@ const HistoryScreen = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <Progress.Circle
-          size={100}
-          progress={progress}
-          showsText={true}
-          color="#6a0dad"
-          thickness={8}
-        />
+        <ActivityIndicator size="large" color="#6a0dad" style={{ transform: [{ scale: 1.5 }] }} />
       </View>
     );
   }
